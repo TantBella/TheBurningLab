@@ -27,7 +27,7 @@ function App() {
         },
         {
           element: <HomePage />,
-          path: "/ideas",
+          path: "/home",
         },
       ],
       element: <Root />,

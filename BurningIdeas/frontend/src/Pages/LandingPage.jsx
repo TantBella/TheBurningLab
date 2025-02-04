@@ -9,7 +9,8 @@ const LandingPage = () => {
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center vh-100">
-      <h1>The Burn Lab</h1>
+
+      <h1 className="text-center mb-4">The Burn Lab 🔥</h1>
       <p>Let's burn some ideas!</p>
       <div className="mt-3">
         <Button
