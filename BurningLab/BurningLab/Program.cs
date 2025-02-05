@@ -16,7 +16,10 @@ namespace BurningLab
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
-            BurnLabService db = new BurnLabService("TheBurnLab");
+            var mongoConnectionString = builder.Configuration["ConnectionStrings:MongoDB"];
+            var databaseName = "TheBurnLab";
+
+            BurnLabService db = new BurnLabService(mongoConnectionString, databaseName);
 
             if (app.Environment.IsDevelopment())
             {

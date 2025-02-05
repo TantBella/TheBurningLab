@@ -8,9 +8,9 @@ namespace BurningLab.Services
     {
         private IMongoDatabase db;
 
-        public BurnLabService(string database)
+        public BurnLabService(string connectionString, string database)
         {
-            var client = new MongoClient();
+            var client = new MongoClient(connectionString);
             db = client.GetDatabase(database);
             CreateIndexes().Wait();
         }
