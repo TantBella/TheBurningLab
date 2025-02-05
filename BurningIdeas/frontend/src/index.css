@@ -1,3 +1,7 @@
+#root {
+  width: 100%;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -9,22 +13,75 @@ body {
   font-family: "Montserrat", "Helvetica Neue", sans-serif;
   text-transform: uppercase;
   letter-spacing: 2px;
+  display: flex;
+  justify-content: center;
+}
+
+main {
+  max-width: 75%;
 }
 
 h1 {
   font-weight: 300;
 }
 
+#newidea,
 #signin,
 #signup {
   border: none;
-
   background-color: rgb(194, 181, 161);
 }
 
+#newidea:hover,
 #signin:hover,
 #signup:hover {
   background-color: rgb(182, 154, 112);
   border: none;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#accountbuttons {
+  margin: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+.hover-dark {
+  transition: color 0.4s ease-in-out;
+  box-shadow: 0 8px 16px 0 rgba(224, 193, 102, 0.2),
+    0 6px 20px 0 rgba(152, 142, 102, 0.19);
+}
+
+.hover-dark:hover {
+  background-color: rgb(66, 66, 65);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#idealampcontainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#idealamp {
+  height: 40px;
+  width: 30px;
+}
+
+#arrowgif {
+  height: 26px;
+}
+
+#footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+}
+
+@media (max-width: 576px) {
+  .card {
+    max-width: 90%;
+    margin: 0 auto;
+  }
 }

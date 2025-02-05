@@ -3,16 +3,14 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import LandingPage from "./Pages/LandingPage";
 import HomePage from "./Pages/HomePage";
+import Footer from "./components/Footer";
 
 function Root() {
   return (
     <>
       {/* <Header /> */}
-      <main>
         <Outlet />
-      </main>
-
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

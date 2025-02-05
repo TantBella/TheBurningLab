@@ -1,68 +1,28 @@
-import React, { useState } from "react";
-import { Container, Button, Form, ListGroup, Card } from "react-bootstrap";
+import React from "react";
+import { Container, Card, Row, Col } from "react-bootstrap";
+import PreviousIdeas from "../components/PreviuosIdeas";
+import NewIdea from "../components/NewIdea";
+import Account from "../components/Account";
 
-const HomePage = ({ previousIdeas, onSubmitIdea, onLogout, onEditAccount }) => {
-  const [idea, setIdea] = useState("");
-
-  const handleSubmit = () => {
-    if (idea.trim() !== "") {
-      onSubmitIdea(idea);
-      setIdea("");
-    }
-  };
-
+const HomePage = () => {
   return (
-    <Container className="mt-5">
-      <Card className="p-4 shadow-sm">
-        <h2 className="text-center mb-4">The Burn Lab 🔥</h2>
+    <>
+      <div id="accountbuttons">
+        <Account />
+      </div>
 
-        <h4>Tidigare idéer</h4>
-        {previousIdeas && previousIdeas.length > 0 ? (
-
-          <ListGroup className="mb-3">
-            {previousIdeas.map((idea, index) => (
-              <ListGroup.Item key={index}>{idea}</ListGroup.Item>
-            ))}
-          </ListGroup>
-        ) : (
-          <p>Inga idéer ännu. Dags att skicka in din första!</p>
-        )}
-
-        <Form>
-          <Form.Group className="mb-3">
-            <Form.Label>Skriv in din idé</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Din briljanta (eller galna) idé..."
-              value={idea}
-              onChange={(e) => setIdea(e.target.value)}
-            />
-          </Form.Group>
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            className="w-100 mb-3"
-          >
-            Skicka idén till labbet
-          </Button>
-        </Form>
-
-        <Button
-          variant="outline-danger"
-          onClick={onLogout}
-          className="w-100 mb-2"
-        >
-          Logga ut
-        </Button>
-        <Button
-          variant="outline-secondary"
-          onClick={onEditAccount}
-          className="w-100"
-        >
-          Hantera konto
-        </Button>
-      </Card>
-    </Container>
+      <h1 className="text-center mt-5 mb-2">The Burn Lab 🔥</h1>
+      <Container className="mt-5">
+        <Row className="g-4">
+          <Col Col xs={12} md={6} className="d-flex">
+            <PreviousIdeas />
+          </Col>
+          <Col Col xs={12} md={6} className="d-flex">
+            <NewIdea />
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 };
 
