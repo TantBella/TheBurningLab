@@ -3,13 +3,14 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import LandingPage from "./Pages/LandingPage";
 import HomePage from "./Pages/HomePage";
+import EditAccount from "./components/EditAccount";
 import Footer from "./components/Footer";
 
 function Root() {
   return (
     <>
       {/* <Header /> */}
-        <Outlet />
+      <Outlet />
       <Footer />
     </>
   );
@@ -26,6 +27,10 @@ function App() {
         {
           element: <HomePage />,
           path: "/home",
+        },
+        {
+          element: <EditAccount />,
+          path: "/editaccount",
         },
       ],
       element: <Root />,
