@@ -12,8 +12,6 @@ let db;
 
 const connectDB = async () => {
   try {
-    console.log("Försöker ansluta till MongoDB...");
-
     const client = new MongoClient(mongoURI);
     await client.connect();
     db = client.db("TheBurnLab");
@@ -30,10 +28,17 @@ connectDB().then(() => {
   app.use(cors());
 
   if (db) {
-    const usersRoute = require("./routes/Users")(db);
+    const usersRoute = require("./routes/GetUsers")(db);
     const answersRoute = require("./routes/Answers")(db);
+    const signinRoute = require("./routes/Signin")(db);
+    const signupRoute = require("./routes/PostUser")(db);
+    const editRoute = require("./routes/PutUser")(db);
 
     app.use("/users", usersRoute);
+    app.use("/signin", signinRoute);
+    app.use("/signup", signupRoute);
+    app.use("/editaccount/:userId", editRoute);
+
     app.use("/answers", answersRoute);
   } else {
     console.error("Databasen är inte tillgänglig!");
@@ -43,21 +48,3 @@ connectDB().then(() => {
     console.log(`Servern körs på port ${PORT}`);
   });
 });
-
-// const upload = multer({ dest: "uploads/" });
-
-// app.get("/", (req, res) => {
-//   res.send("Welcome to my API");
-// });
-
-// app.post("/createaccount", upload.single("profileImage"), (req, res) => {
-//   const { name, username, password } = req.body;
-//   const profileImage = req.file ? req.file.filename : null;
-
-//   console.log({ name, username, password, profileImage });
-
-//   res.json({
-//     message: "Konto skapat!",
-//     user: { name, username, profileImage },
-//   });
-// });
