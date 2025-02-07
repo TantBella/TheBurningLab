@@ -1,5 +1,5 @@
 const express = require("express");
-// const { ObjectId } = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 module.exports = (db) => {
   const router = express.Router();
@@ -17,6 +17,23 @@ module.exports = (db) => {
       res
         .status(500)
         .json({ message: "Kunde inte hämta användare", error: error.message });
+    }
+  });
+
+  router.get("/:userId", async (req, res) => {
+    const { userId } = req.params;
+    try {
+      const user = await db.collection(collectionName).findOne({ _id: userId });
+
+      if (!user) {
+        return res.status(404).json({ message: "Användaren hittades inte." });
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({
+        message: "Fel vid hämtning av användare.",
+        error: error.message,
+      });
     }
   });
 

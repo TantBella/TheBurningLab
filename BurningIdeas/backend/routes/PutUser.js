@@ -8,46 +8,55 @@ const upload = multer({ dest: "uploads/" });
 module.exports = (db) => {
   const collectionName = "Users";
 
-  // router.get("/editaccount", async (req, res) => {
-  //   try {
-  //     if (!db) {
-  //       return res.status(500).json({ message: "Databasanslutning saknas" });
-  //     }
-  //     const users = await db.collection(collectionName).find().toArray();
-  //     res.json(users);
-  //   } catch (error) {
-  //     console.error("Fel vid hämtning av användare:", error);
-  //     res
-  //       .status(500)
-  //       .json({ message: "Kunde inte hämta användare", error: error.message });
-  //   }
-  // });
+  router.patch(
+    "/:userId",
+    upload.single("profilepicture"),
+    async (req, res) => {
+      console.log("Request Params:", req.params);
+      console.log("Request Body:", req.body);
+      console.log("Uploaded File:", req.file);
 
-  router.put("/:userId", async (req, res) => {
-  const { userId } = req.params;
-  const { name, username, password, profilePicture } = req.body;
+      const { userId } = req.params;
+      const { name, username, oldPassword, newPassword } = req.body;
 
-  try {
-    const result = await db
-      .collection(collectionName)
-      .updateOne(
-        { _id: ObjectId(userId) }, 
-        {
-          $set: { name, username, password, profilePicture },
+      const userObjectId = new ObjectId(userId);
+
+      const profilePicturePath = req.file
+        ? `/uploads/${req.file.filename}`
+        : null;
+
+      const updatedData = {};
+
+      if (name) updatedData.name = name;
+      if (username) updatedData.username = username;
+      if (newPassword) updatedData.password = newPassword;
+      if (profilePicturePath) updatedData.profilepicture = profilePicturePath;
+
+      try {
+        const result = await db
+          .collection(collectionName)
+          .updateOne({ _id: userObjectId }, { $set: updatedData });
+
+        if (result.matchedCount === 0) {
+          return res.status(404).json({ message: "Användaren hittades inte." });
         }
-      );
 
-    if (result.matchedCount === 0) {
-      return res.status(400).json({ message: "Användaren existerar inte" });
+        const updatedUser = await db
+          .collection(collectionName)
+          .findOne({ _id: userObjectId });
+
+        return res.status(200).json({
+          message: "Kontouppgifter uppdaterade!",
+          updatedUser: updatedUser,
+        });
+      } catch (error) {
+        return res.status(500).json({
+          message: "Ett fel inträffade vid uppdatering av användaren.",
+          error: error.message,
+        });
+      }
     }
-
-    res.status(200).json({ message: "Kontouppgifter uppdaterade!" });
-  } catch (error) {
-    console.error("Fel vid uppdatering av användare:", error);
-    res.status(500).json({ message: "Ett fel inträffade" });
-  }
-});
-
+  );
 
   return router;
 };

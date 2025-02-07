@@ -20,7 +20,14 @@ module.exports = (db) => {
       }
 
       if (user.PassWord === PassWord) {
-        return res.json({ message: "Inloggad!", user });
+        res.json({
+          message: "Inloggad!",
+          userId: user._id,
+          name: user.name,
+          username: user.username,
+          password: user.password,
+          profilepicture: user.profilepicture,
+        });
       } else {
         return res.status(401).json({ message: "Fel lösenord" });
       }
