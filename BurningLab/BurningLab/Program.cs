@@ -44,6 +44,12 @@ namespace BurningLab
                 return Results.Ok(answers);
             });
 
+            app.MapGet("/Answer", async () =>
+            {
+                var answers = await db.GetRandomAnswer();
+                return Results.Ok(answers);
+            });
+
 
             //hämta user
             app.MapGet("/Users", async () =>
@@ -71,6 +77,27 @@ namespace BurningLab
             {
                 var user = await db.DeleteUser("Users", id);
                 return Results.Ok(user);
+            });
+
+            //lägg till en ide
+            app.MapPost("/Ideas", async (string userId, Ideas idea) =>
+            {
+                var response = await db.SaveUserIdea(userId, idea);
+                    return Results.Ok(response);
+            });
+
+            //hämta alla ideer
+            app.MapGet("/Ideas", async () =>
+            {
+                var idea = await db.GetIdeas("Ideas");
+                return Results.Ok(idea);
+            });
+
+            //radera en ide
+            app.MapDelete("/idea/{id}", async (ObjectId id) =>
+            {
+                var idea = await db.DeleteIdea("Ideas", id);
+                return Results.Ok(idea);
             });
 
             app.Run();

@@ -8,13 +8,13 @@ namespace BurningLab.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
 
-        public ObjectId UserId { get; set; }
-        public string Name { get; set; }
+        public ObjectId userId { get; set; } 
+        public string name { get; set; }
         [BsonElement("username")]
         [BsonRequired]
-        public string UserName { get; set; }
-        public string PassWord { get; set; }
-        public string ProfilePicture { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
+        public string profilepicture { get; set; }
         public List<Ideas> Ideas { get; set; }
         public List<Answers> Answers { get; set; }
     }

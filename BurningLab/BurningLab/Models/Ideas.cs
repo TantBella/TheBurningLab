@@ -1,5 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BurningLab.Models
 {
@@ -7,10 +7,14 @@ namespace BurningLab.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string UserId { get; set; }
-        public ObjectId IdeaId { get; set; }
+
+        public ObjectId IdeaId { get; set; } 
+
+        public ObjectId UserId { get; set; }
+
+        public string IdeaTitle { get; set; }
         public string IdeaText { get; set; }
         public string AnswerText { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
