@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -10,13 +10,14 @@ const SignIn = ({ show, setShow }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  if (isAuthenticated) {
-    navigate("/home");
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-
     try {
       const response = await axios.post("/signin", { username, password });
 
@@ -26,9 +27,10 @@ const SignIn = ({ show, setShow }) => {
         localStorage.setItem("userId", response.data.userId);
         localStorage.setItem("name", response.data.name);
         localStorage.setItem(
-          "profilePicture",
-          response.data.profilePicture || ""
+          "profilepicture",
+          response.data.profilepicture || ""
         );
+        console.log("API response:", response.data);
         setIsAuthenticated(true);
         setShow(false);
       }

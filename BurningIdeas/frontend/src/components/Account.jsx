@@ -1,35 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
+import useUser from "../hooks/useUser";
 import accountSettings from "../assets/accountsettingsicon.png";
 import logOut from "../assets/logouticon.png";
 
-const Account = ({ user }) => {
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+const Account = () => {
+  const { user } = useUser();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const authStatus = localStorage.getItem("isAuthenticated") === "true";
-    setIsAuthenticated(authStatus);
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     setIsAuthenticated(false);
     setShowLogoutModal(false);
     navigate("/");
+     console.log("isAuthenticated:", isAuthenticated);
+
   };
 
   const handleEditAccount = () => {
-    const userData = {
-      username: localStorage.getItem("username"),
-      name: localStorage.getItem("name"),
-      profilePicture: localStorage.getItem("profilePicture"),
-    };
-
-    navigate("/editaccount", { state: { user: userData } });
+    navigate("/editaccount");
   };
 
   return (
@@ -40,7 +32,7 @@ const Account = ({ user }) => {
         className="hover-dark"
         onClick={handleEditAccount}
       >
-        <img src={accountSettings} />
+        <img src={accountSettings} alt="Redigera konto" />
       </Button>
       <Button
         variant="link"
@@ -48,7 +40,7 @@ const Account = ({ user }) => {
         className="hover-dark"
         onClick={() => setShowLogoutModal(true)}
       >
-        <img src={logOut} />
+        <img src={logOut} alt="Logga ut" />
       </Button>
 
       <Modal
@@ -60,7 +52,7 @@ const Account = ({ user }) => {
           <Modal.Title>Bekräfta utloggning</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {user && <p> {user.username}, </p>}vill du logga ut från ditt konto?
+          {user && <p>{user.username}, </p>}vill du logga ut från ditt konto?
         </Modal.Body>
         <Modal.Footer>
           <Button
