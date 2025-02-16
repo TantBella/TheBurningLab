@@ -5,13 +5,13 @@ import LandingPage from "./Pages/LandingPage";
 import HomePage from "./Pages/HomePage";
 import EditAccount from "./components/EditAccount";
 import Footer from "./components/Footer";
+import SelectedIdea from "./components/SelectedIdea";
 
 function Root() {
   return (
     <>
-      {/* <Header /> */}
       <main>
-      <Outlet />
+        <Outlet />
       </main>
       <Footer />
     </>
@@ -33,6 +33,10 @@ function App() {
         {
           element: <EditAccount />,
           path: "/editaccount",
+        },
+        {
+          element: <SelectedIdea />,
+          path: "/idea/:ideaId",
         },
       ],
       element: <Root />,

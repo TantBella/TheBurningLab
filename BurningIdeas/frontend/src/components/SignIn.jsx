@@ -32,7 +32,6 @@ const SignIn = ({ show, setShow }) => {
         localStorage.setItem("_id", response.data.userId);
         localStorage.setItem("name", response.data.name);
 
-        console.log("API response:", response.data);
         setUser({
           username,
           userId: response.data.userId,

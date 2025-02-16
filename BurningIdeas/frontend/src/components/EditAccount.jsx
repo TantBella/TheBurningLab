@@ -27,7 +27,6 @@ const EditAccount = () => {
       setName(user.name || "");
       setUsername(user.username || "");
       setLoading(false);
-      console.log("Användardata:", user);
     }
   }, [user]);
 

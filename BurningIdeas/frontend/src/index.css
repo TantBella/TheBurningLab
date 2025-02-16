@@ -18,6 +18,7 @@ body {
 
 main {
   min-height: 90vh;
+  margin-bottom: 1.5rem;
 }
 
 h1 {
@@ -67,6 +68,18 @@ h1 {
 #idealamp {
   height: 40px;
   width: 30px;
+}
+
+#ideatext {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#trashButton {
+  height: 32px;
 }
 
 #arrowgif {

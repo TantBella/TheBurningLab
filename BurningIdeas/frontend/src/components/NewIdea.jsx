@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Card } from "react-bootstrap";
+import { Button, Form, Card, Modal } from "react-bootstrap";
 import axios from "axios";
 import arrowDown from "../assets/arrow-down.gif";
 import { useUser } from "../hooks/useUser";
@@ -9,35 +9,35 @@ const NewIdea = () => {
   const [ideaText, setIdeaText] = useState("");
   const [message, setMessage] = useState("");
   const [answer, setAnswer] = useState("");
-  const { user, isAuthenticated } = useUser();
+  const [showModal, setShowModal] = useState(false);
+  const { user } = useUser();
 
   const handleIdea = async (e) => {
-    e.preventDefault();
-
-    if (!user.userId) {
-      setMessage("Du måste vara inloggad för att skicka in en idé.");
-      return;
-    }
     if (!user) {
       setMessage("Du måste vara inloggad för att skicka in en idé.");
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/idea", {
+      const response = await axios.post("http://localhost:3000/postidea", {
         id: user.userId,
         ideaTitle,
         ideaText,
       });
-      console.log(response);
 
       setMessage(response.data.message);
       setAnswer(response.data.answerText);
+      setShowModal(true);
       setIdeaTitle("");
       setIdeaText("");
     } catch (error) {
       setMessage("Något gick fel, försök igen.");
     }
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    window.location.reload();
   };
 
   return (
@@ -75,6 +75,20 @@ const NewIdea = () => {
           </Card.Body>
         )}
       </Card>
+
+      <Modal show={showModal} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>The BurnLab tycker: </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{answer}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleClose}>
+            Okej!
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

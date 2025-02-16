@@ -15,11 +15,9 @@ const SignUp = ({ show, setShow }) => {
     formData.append("password", password);
 
     try {
-      const response = await axios.post("/signup", formData, {
+      const response = await axios.post("http://localhost:3000/signup", formData, {
         headers: { "Content-Type": "application/json" },
       });
-
-      console.log("Server response:", response.data);
 
       if (response.status === 201) {
         setShow(false);

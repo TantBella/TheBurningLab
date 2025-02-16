@@ -23,8 +23,6 @@ const DeleteAccount = ({
 
       if (response.data.message === "Kontot raderades.") {
         setAccountDeleted(true);
-      } else {
-        setDeleteMessage("Felaktigt lösenord.");
       }
     } catch (error) {
       console.error("Fel vid radering:", error);

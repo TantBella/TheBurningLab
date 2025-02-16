@@ -17,7 +17,6 @@ const Account = () => {
     setIsAuthenticated(false);
     setShowLogoutModal(false);
     navigate("/");
-     console.log("isAuthenticated:", isAuthenticated);
 
   };
 
