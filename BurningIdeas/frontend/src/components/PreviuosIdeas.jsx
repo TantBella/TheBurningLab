@@ -6,42 +6,34 @@ import axios from "axios";
 import { useUser } from "../hooks/useUser";
 
 const PreviousIdeas = () => {
-  const [userId, setUserId] = useState(null);
   const [previousIdeas, setPreviousIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { user } = useUser();
 
- useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-
-    if (!storedUserId) {
+  useEffect(() => {
+    if (!user || !user.userId) {
       setError("Ingen användare är inloggad. ID saknas.");
       setLoading(false);
       return;
     }
 
-    setUserId(storedUserId);
-  }, []);
-
-  useEffect(() => {
-    if (!userId) return;
-
     const fetchIdeas = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:3000/ideas/${userId}`);
+        const response = await axios.get(
+          `http://localhost:3000/ideas/${user.userId}`
+        );
         setPreviousIdeas(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Fel vid hämtning av idéer:", error);
         setError("Kunde inte hämta idéer. Försök igen.");
         setLoading(false);
       }
     };
 
     fetchIdeas();
-  }, [userId]);
-
+  }, [user]);
 
   return (
     <>
@@ -59,7 +51,9 @@ const PreviousIdeas = () => {
         {previousIdeas && previousIdeas.length > 0 ? (
           <ListGroup className="mb-3">
             {previousIdeas.map((idea, index) => (
-              <ListGroup.Item key={index}>{idea.ideaText}</ListGroup.Item>
+              <ListGroup.Item key={index}>
+                <strong>{idea.IdeaTitle}</strong>: {idea.IdeaText}
+              </ListGroup.Item>
             ))}
           </ListGroup>
         ) : (

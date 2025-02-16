@@ -2,34 +2,40 @@ import React, { useState } from "react";
 import { Button, Form, Card } from "react-bootstrap";
 import axios from "axios";
 import arrowDown from "../assets/arrow-down.gif";
+import { useUser } from "../hooks/useUser";
 
 const NewIdea = () => {
   const [ideaTitle, setIdeaTitle] = useState("");
   const [ideaText, setIdeaText] = useState("");
   const [message, setMessage] = useState("");
   const [answer, setAnswer] = useState("");
-  const userId = localStorage.getItem("userId");
+  const { user, isAuthenticated } = useUser();
 
   const handleIdea = async (e) => {
     e.preventDefault();
-    if (!userId) {
+
+    if (!user.userId) {
+      setMessage("Du måste vara inloggad för att skicka in en idé.");
+      return;
+    }
+    if (!user) {
       setMessage("Du måste vara inloggad för att skicka in en idé.");
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/ideas", {
-        userId,
+      const response = await axios.post("http://localhost:3000/idea", {
+        id: user.userId,
         ideaTitle,
         ideaText,
       });
+      console.log(response);
 
       setMessage(response.data.message);
       setAnswer(response.data.answerText);
       setIdeaTitle("");
       setIdeaText("");
     } catch (error) {
-      console.error("Fel vid inlämning:", error);
       setMessage("Något gick fel, försök igen.");
     }
   };
