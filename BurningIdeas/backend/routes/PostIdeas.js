@@ -5,25 +5,24 @@ const router = express.Router();
 
 module.exports = (db) => {
   router.post("/", async (req, res) => {
-    const { userId, ideaTitle, ideaText } = req.body;
+    const { id, ideaTitle, ideaText } = req.body;
 
-    if (!userId || !ideaTitle || !ideaText) {
+    if (!id || !ideaTitle || !ideaText) {
       return res.status(400).json({ message: "Alla fält måste fyllas i." });
     }
 
     try {
-      // const userObjectId = new ObjectId(userId);
-      const userObjectId = ObjectId.createFromHexString(userId);
+      const userObjectId = new ObjectId(id);
 
       const answer = await db
         .collection("Answers")
         .aggregate([{ $sample: { size: 1 } }])
         .toArray();
+
       const answerText =
         answer.length > 0 ? answer[0].AnswerText : "Inget svar hittades.";
 
       const newIdea = {
-        IdeaId: new ObjectId(),
         IdeaTitle: ideaTitle,
         IdeaText: ideaText,
         AnswerText: answerText,
