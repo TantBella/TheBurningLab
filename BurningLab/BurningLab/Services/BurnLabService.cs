@@ -41,13 +41,7 @@ namespace BurningLab.Services
                 return allAnswers[randomIndex]; 
             }
             return null;
-            //var randomAnswer = await answersCollection.Aggregate()
-            //    .Sample(1)
-            //    .FirstOrDefaultAsync();
-
-            //return randomAnswer;
         }
-
 
         //skapa idder
         public async Task<List<Ideas>> SaveUserIdea(string table, Ideas idea)
@@ -57,7 +51,6 @@ namespace BurningLab.Services
             var randomAnswer = await GetRandomAnswer();
             idea.AnswerText = randomAnswer != null ? randomAnswer.AnswerText : "Inget svar hittades.";
             await ideasCollection.InsertOneAsync(idea);
-
 
             return ideasCollection.AsQueryable().ToList();
         }
@@ -73,7 +66,7 @@ namespace BurningLab.Services
         public async Task<string> DeleteIdea(string table, ObjectId id)
         {
             var collection = db.GetCollection<Ideas>(table);
-            var result = await collection.DeleteOneAsync(x => x.IdeaId == id);
+            var result = await collection.DeleteOneAsync(x => x._id == id);
             return result.DeletedCount > 0 ? "Idén togs bort" : "Idén finns inte";
         }
 
@@ -111,14 +104,14 @@ namespace BurningLab.Services
         public async Task<Users> UpdateUser(string table, Users user)
         {
             var collection = db.GetCollection<Users>(table);
-            await collection.ReplaceOneAsync(x => x.userId == user.userId, user);
+            await collection.ReplaceOneAsync(x => x._id == user._id, user);
             return user;
         }
 
         public async Task<string> DeleteUser(string table, ObjectId id)
         {
             var collection = db.GetCollection<Users>(table);
-            var result = await collection.DeleteOneAsync(x => x.userId == id);
+            var result = await collection.DeleteOneAsync(x => x._id == id);
             return result.DeletedCount > 0 ? "Användaren togs bort" : "Användaren hittades inte";
         }
     }

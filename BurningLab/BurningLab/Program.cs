@@ -44,6 +44,7 @@ namespace BurningLab
                 return Results.Ok(answers);
             });
 
+            //hämnta slumpat svar
             app.MapGet("/Answer", async () =>
             {
                 var answers = await db.GetRandomAnswer();
@@ -51,7 +52,7 @@ namespace BurningLab
             });
 
 
-            //hämta user
+            //hämta users
             app.MapGet("/Users", async () =>
             {
                 var users = await db.GetUsers("Users");

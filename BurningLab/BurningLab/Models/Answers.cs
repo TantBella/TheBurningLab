@@ -7,7 +7,7 @@ namespace BurningLab.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId AnswerId { get; set; }
+        public ObjectId _id { get; set; }
         public string AnswerText { get; set; }
     }
 }
