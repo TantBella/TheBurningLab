@@ -13,7 +13,6 @@ module.exports = (db) => {
       }
 
       const user = await db.collection(collectionName).findOne({ username });
-      console.log(user.username);
 
       if (!user) {
         return res.status(401).json({ message: "Användare hittades inte" });
@@ -26,7 +25,6 @@ module.exports = (db) => {
           name: user.name,
           username: user.username,
           password: user.password,
-          profilepicture: user.profilepicture,
         });
       } else {
         return res.status(401).json({ message: "Fel lösenord" });

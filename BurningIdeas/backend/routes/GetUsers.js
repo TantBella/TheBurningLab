@@ -20,10 +20,16 @@ module.exports = (db) => {
     }
   });
 
-  router.get("/:userId", async (req, res) => {
-    const { userId } = req.params;
+  router.get("/:id", async (req, res) => {
+    const { id } = req.params; 
     try {
-      const user = await db.collection(collectionName).findOne({ _id: userId });
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Ogiltigt ID-format" });
+      }
+
+      const user = await db
+        .collection(collectionName)
+        .findOne({ _id: new ObjectId(id) });
 
       if (!user) {
         return res.status(404).json({ message: "Användaren hittades inte." });

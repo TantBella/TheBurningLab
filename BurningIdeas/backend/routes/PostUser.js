@@ -1,30 +1,11 @@
 const express = require("express");
-const multer = require("multer");
-
 const router = express.Router();
-const upload = multer({ dest: "uploads/" });
 
 module.exports = (db) => {
   const collectionName = "Users";
 
-  router.get("/signup", async (req, res) => {
-    try {
-      if (!db) {
-        return res.status(500).json({ message: "Databasanslutning saknas" });
-      }
-      const users = await db.collection(collectionName).find().toArray();
-      res.json(users);
-    } catch (error) {
-      console.error("Fel vid hämtning av användare:", error);
-      res
-        .status(500)
-        .json({ message: "Kunde inte hämta användare", error: error.message });
-    }
-  });
-
-  router.post("/signup", upload.single("profilepicture"), async (req, res) => {
+  router.post("/signup", async (req, res) => {
     const { name, username, password } = req.body;
-    const profilepicture = req.file ? req.file.filename : null;
 
     if (!name || !username || !password) {
       return res.status(400).json({ message: "Alla fält måste fyllas i." });
@@ -42,7 +23,6 @@ module.exports = (db) => {
         name,
         username,
         password,
-        profilepicture,
       };
 
       await usersCollection.insertOne(newUser);
