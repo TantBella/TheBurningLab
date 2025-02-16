@@ -36,8 +36,7 @@ module.exports = (db) => {
         .findOne({ _id: userObjectId });
 
       return res.status(200).json({
-        message: "Kontouppgifter uppdaterade!",
-        updatedUser: updatedUser,
+        message: "Kontouppgifter uppdaterade!"
       });
     } catch (error) {
       return res.status(500).json({

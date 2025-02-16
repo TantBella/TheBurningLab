@@ -35,14 +35,18 @@ connectDB().then(() => {
     const deleteUserRoute = require("./routes/DeleteUser")(db);
     const postIdeaRoutes = require("./routes/PostIdeas")(db);
     const getIdeasRoutes = require("./routes/GetIdeas")(db);
+    const getIdeaByIdRoutes = require("./routes/GetIdeaById")(db);
+    const deleteIdearoute = require("./routes/DeleteIdea")(db);
 
     app.use("/users", usersRoute);
     app.use("/signin", signinRoute);
     app.use("/signup", signupRoute);
     app.use("/editaccount", editRoute);
     app.use("/deleteaccount", deleteUserRoute);
+    app.use("/postidea", postIdeaRoutes);
     app.use("/ideas", getIdeasRoutes);
-    app.use("/idea", postIdeaRoutes);
+    app.use("/idea", getIdeaByIdRoutes);
+    app.use("/idea/delete", deleteIdearoute);
     app.use("/answers", answersRoute);
   } else {
     console.error("Databasen är inte tillgänglig!");

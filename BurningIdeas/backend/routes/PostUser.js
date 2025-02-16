@@ -4,7 +4,7 @@ const router = express.Router();
 module.exports = (db) => {
   const collectionName = "Users";
 
-  router.post("/signup", async (req, res) => {
+  router.post("/", async (req, res) => {
     const { name, username, password } = req.body;
 
     if (!name || !username || !password) {
