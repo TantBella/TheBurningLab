@@ -15,62 +15,6 @@ namespace BurningLab.Services
             CreateIndexes().Wait();
         }
 
-        //skapa svar
-        public async Task<List<Answers>> CreateAnswer(string table, Answers answer)
-        {
-            var collection = db.GetCollection<Answers>(table);
-            await collection.InsertOneAsync(answer);
-            return collection.AsQueryable().ToList();
-        }
-
-        // Hämta alla svar
-        public async Task<List<Answers>> GetAnswers(string table)
-        {
-            var collection = db.GetCollection<Answers>(table);
-            return await collection.Find(_ => true).ToListAsync();
-        }
-
-        //hämta slumpmässiga svar
-        public async Task<Answers> GetRandomAnswer()
-        {
-            var answersCollection = db.GetCollection<Answers>("Answers");
-            var allAnswers = await answersCollection.Find(FilterDefinition<Answers>.Empty).ToListAsync();
-            if (allAnswers.Count > 0)
-            {
-                var randomIndex = new Random().Next(allAnswers.Count);
-                return allAnswers[randomIndex]; 
-            }
-            return null;
-        }
-
-        //skapa idder
-        public async Task<List<Ideas>> SaveUserIdea(string table, Ideas idea)
-        {
-            var ideasCollection = db.GetCollection<Ideas>("Ideas");
-            var answersCollection = db.GetCollection<Answers>("Answers");
-            var randomAnswer = await GetRandomAnswer();
-            idea.AnswerText = randomAnswer != null ? randomAnswer.AnswerText : "Inget svar hittades.";
-            await ideasCollection.InsertOneAsync(idea);
-
-            return ideasCollection.AsQueryable().ToList();
-        }
-
-        //hämta ideer
-        public async Task<List<Ideas>> GetIdeas(string table)
-        {
-            var collection = db.GetCollection<Ideas>(table);
-            return await collection.Find(_ => true).ToListAsync();
-        }
-
-
-        public async Task<string> DeleteIdea(string table, ObjectId id)
-        {
-            var collection = db.GetCollection<Ideas>(table);
-            var result = await collection.DeleteOneAsync(x => x._id == id);
-            return result.DeletedCount > 0 ? "Idén togs bort" : "Idén finns inte";
-        }
-
-
         private async Task CreateIndexes()
         {
             var userCollection = db.GetCollection<Users>("Users");
@@ -79,6 +23,7 @@ namespace BurningLab.Services
             await userCollection.Indexes.CreateOneAsync(indexModel);
         }
 
+        //CREATE user
         public async Task<List<Users>> CreateUser(string table, Users user)
         {
             var collection = db.GetCollection<Users>(table);
@@ -95,12 +40,14 @@ namespace BurningLab.Services
             return collection.AsQueryable().ToList();
         }
 
+        //READ user
         public async Task<List<Users>> GetUsers(string table)
         {
             var collection = db.GetCollection<Users>(table);
             return await collection.Find(_ => true).ToListAsync();
         }
 
+        //UPDATE user
         public async Task<Users> UpdateUser(string table, Users user)
         {
             var collection = db.GetCollection<Users>(table);
@@ -108,11 +55,34 @@ namespace BurningLab.Services
             return user;
         }
 
+        //DELETE user
         public async Task<string> DeleteUser(string table, ObjectId id)
         {
             var collection = db.GetCollection<Users>(table);
             var result = await collection.DeleteOneAsync(x => x._id == id);
             return result.DeletedCount > 0 ? "Användaren togs bort" : "Användaren hittades inte";
         }
+
+        //skapa svar
+        public async Task<List<Answers>> CreateAnswer(string table, Answers answer)
+        {
+            var collection = db.GetCollection<Answers>(table);
+            await collection.InsertOneAsync(answer);
+            return collection.AsQueryable().ToList();
+        }
+
+        // Hämta alla svar
+        public async Task<List<Answers>> GetAnswers(string table)
+        {
+            var collection = db.GetCollection<Answers>(table);
+            return await collection.Find(_ => true).ToListAsync();
+        }
+
+        //hämta ideer
+        public async Task<List<Ideas>> GetIdeas(string table)
+        {
+            var collection = db.GetCollection<Ideas>(table);
+            return await collection.Find(_ => true).ToListAsync();
+        }       
     }
 }
