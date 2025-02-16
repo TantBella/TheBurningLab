@@ -83,6 +83,12 @@ h1 {
   margin: 1rem 0.5rem;
 }
 
+#deletesure {
+  background-color: rgb(161, 32, 32);
+  color: #fefefe;
+  padding: 1rem;
+}
+
 #footer {
   position: relative;
   left: 0;

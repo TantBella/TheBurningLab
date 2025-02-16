@@ -23,8 +23,6 @@ const DeleteAccount = ({
 
       if (response.data.message === "Kontot raderades.") {
         setAccountDeleted(true);
-        localStorage.clear();
-        setUser(null);
       } else {
         setDeleteMessage("Felaktigt lösenord.");
       }
@@ -36,6 +34,8 @@ const DeleteAccount = ({
 
   const handleCloseModal = () => {
     if (accountDeleted) {
+      localStorage.clear();
+      setUser(null);
       navigate("/");
     }
     setShowDeleteModal(false);
@@ -51,11 +51,11 @@ const DeleteAccount = ({
       <Modal.Body>
         {accountDeleted ? (
           <p>
-            Kontot har raderats. Klicka på OK för att återgå till startsidan.
+            Kontot har raderats. Klicka på OK för att komma till startsidan.
           </p>
         ) : (
           <>
-            <p>Alla dina idéer kommer försvinna.</p>
+            <p id="deletesure">Alla dina idéer kommer försvinna.</p>
             <Form.Group>
               <Form.Label>Fyll i ditt lösenord för att bekräfta:</Form.Label>
               <Form.Control

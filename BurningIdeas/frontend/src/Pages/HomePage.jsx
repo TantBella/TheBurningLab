@@ -3,7 +3,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import PreviousIdeas from "../components/PreviuosIdeas";
 import NewIdea from "../components/NewIdea";
 import Account from "../components/Account";
-import useUser from "../hooks/useUser";
+import { useUser } from "../hooks/useUser";
+
 
 const HomePage = () => {
   const { user, isAuthenticated } = useUser();

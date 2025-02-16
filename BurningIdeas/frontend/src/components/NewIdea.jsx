@@ -3,55 +3,71 @@ import { Button, Form, Card } from "react-bootstrap";
 import axios from "axios";
 import arrowDown from "../assets/arrow-down.gif";
 
-const NewIdea = ({}) => {
-  const [idea, setIdea] = useState("");
+const NewIdea = () => {
+  const [ideaTitle, setIdeaTitle] = useState("");
+  const [ideaText, setIdeaText] = useState("");
+  const [message, setMessage] = useState("");
+  const [answer, setAnswer] = useState("");
+  const userId = localStorage.getItem("userId");
 
-  const handleIdea = async () => {
-    if (idea.trim() === "") return;
-
-    const userId = localStorage.getItem("userId");
-
+  const handleIdea = async (e) => {
+    e.preventDefault();
     if (!userId) {
-      alert("Du måste vara inloggad för att skicka en idé.");
+      setMessage("Du måste vara inloggad för att skicka in en idé.");
       return;
     }
 
     try {
       const response = await axios.post("http://localhost:3000/ideas", {
         userId,
-        ideaText: idea,
+        ideaTitle,
+        ideaText,
       });
 
-      if (response.status === 201) {
-        setIdea("");
-        alert("Idé tillagd!");
-      } else {
-        alert(response.data.message || "Något gick fel.");
-      }
+      setMessage(response.data.message);
+      setAnswer(response.data.answerText);
+      setIdeaTitle("");
+      setIdeaText("");
     } catch (error) {
-      console.error("Fel vid registrering av idé:", error);
+      console.error("Fel vid inlämning:", error);
+      setMessage("Något gick fel, försök igen.");
     }
   };
 
   return (
     <>
       <Card className="w-100 h-100 p-3 shadow-sm d-flex flex-column">
-        <Form>
+        <Form onSubmit={handleIdea}>
           <Form.Group className="mb-3">
             <Form.Label>
-              Skriv in din idé <img id="arrowgif" src={arrowDown} />{" "}
+              Skriv in din idé <img id="arrowgif" src={arrowDown} />
             </Form.Label>
             <Form.Control
+              className="mt-2"
               type="text"
               placeholder="Din briljanta (eller galna) idé..."
-              value={idea}
-              onChange={(e) => setIdea(e.target.value)}
+              value={ideaText}
+              onChange={(e) => setIdeaText(e.target.value)}
+              required
+            />
+            <Form.Control
+              className="mt-2"
+              type="text"
+              placeholder="Döp din idé"
+              value={ideaTitle}
+              onChange={(e) => setIdeaTitle(e.target.value)}
+              required
             />
           </Form.Group>
-          <Button id="newidea" onClick={handleIdea} className="w-100 mb-3">
+          <Button id="newidea" type="submit" className="w-100 mb-3">
             Skicka idén till labbet
           </Button>
         </Form>
+        {answer && (
+          <Card.Body>
+            <Card.Text> {answer}</Card.Text>
+          </Card.Body>
+        )}
       </Card>
     </>
   );

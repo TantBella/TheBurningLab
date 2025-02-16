@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useUser = () => {
+export function useUser() {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -9,26 +9,15 @@ const useUser = () => {
     setIsAuthenticated(authStatus);
 
     if (authStatus) {
-      const userId = localStorage.getItem("userId");
+      const userId = localStorage.getItem("_id");
       const name = localStorage.getItem("name");
       const username = localStorage.getItem("username");
-      const profilepicture = localStorage.getItem("profilepicture");
 
-      setUser({ username, userId, name, profilepicture });
+      setUser({ username, userId, name });
+    } else {
+      setUser(null);
     }
   }, []);
 
-  // const logout = () => {
-  //   localStorage.removeItem("isAuthenticated");
-  //   localStorage.removeItem("username");
-  //   localStorage.removeItem("userId");
-  //   localStorage.removeItem("name");
-  //   localStorage.removeItem("profilePicture");
-  //   setUser(null);
-  //   setIsAuthenticated(false);
-  // };
-
   return { user, isAuthenticated, setUser };
-};
-
-export default useUser;
+}

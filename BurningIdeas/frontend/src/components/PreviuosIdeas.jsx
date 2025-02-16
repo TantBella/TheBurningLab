@@ -1,8 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ListGroup, Card, Container, Row, Col } from "react-bootstrap";
 import ideaLamp from "../assets/icon.png";
+import axios from "axios";
 
-const PreviousIdeas = ({ previousIdeas }) => {
+import { useUser } from "../hooks/useUser";
+
+const PreviousIdeas = () => {
+  const [userId, setUserId] = useState(null);
+  const [previousIdeas, setPreviousIdeas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+ useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+
+    if (!storedUserId) {
+      setError("Ingen användare är inloggad. ID saknas.");
+      setLoading(false);
+      return;
+    }
+
+    setUserId(storedUserId);
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchIdeas = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`http://localhost:3000/ideas/${userId}`);
+        setPreviousIdeas(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Fel vid hämtning av idéer:", error);
+        setError("Kunde inte hämta idéer. Försök igen.");
+        setLoading(false);
+      }
+    };
+
+    fetchIdeas();
+  }, [userId]);
+
+
   return (
     <>
       <Card className="w-100 h-100 p-3 shadow-sm d-flex flex-column">
@@ -19,7 +59,7 @@ const PreviousIdeas = ({ previousIdeas }) => {
         {previousIdeas && previousIdeas.length > 0 ? (
           <ListGroup className="mb-3">
             {previousIdeas.map((idea, index) => (
-              <ListGroup.Item key={index}>{idea}</ListGroup.Item>
+              <ListGroup.Item key={index}>{idea.ideaText}</ListGroup.Item>
             ))}
           </ListGroup>
         ) : (

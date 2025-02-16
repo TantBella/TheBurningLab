@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../hooks/useUser";
 
 const SignIn = ({ show, setShow }) => {
+  const { setUser } = useUser();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -19,18 +21,24 @@ const SignIn = ({ show, setShow }) => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/signin", { username, password });
+      const response = await axios.post("http://localhost:3000/signin", {
+        username,
+        password,
+      });
 
       if (response.data.message === "Inloggad!") {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("username", username);
-        localStorage.setItem("userId", response.data.userId);
+        localStorage.setItem("_id", response.data.userId);
         localStorage.setItem("name", response.data.name);
-        localStorage.setItem(
-          "profilepicture",
-          response.data.profilepicture || ""
-        );
+
         console.log("API response:", response.data);
+        setUser({
+          username,
+          userId: response.data.userId,
+          name: response.data.name,
+        });
+
         setIsAuthenticated(true);
         setShow(false);
       }

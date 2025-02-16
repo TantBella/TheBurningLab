@@ -6,7 +6,6 @@ const SignUp = ({ show, setShow }) => {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [profilepicture, setProfileImage] = useState(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const handleSignUp = async () => {
@@ -14,13 +13,10 @@ const SignUp = ({ show, setShow }) => {
     formData.append("name", name);
     formData.append("username", username);
     formData.append("password", password);
-    if (profilepicture) {
-      formData.append("profilepicture", profilepicture);
-    }
 
     try {
       const response = await axios.post("/signup", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "application/json" },
       });
 
       console.log("Server response:", response.data);
@@ -71,13 +67,7 @@ const SignUp = ({ show, setShow }) => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Profilbild (valfritt)</Form.Label>
-              <Form.Control
-                type="file"
-                onChange={(e) => setProfileImage(e.target.files[0])}
-              />
-            </Form.Group>
+
             <Button variant="primary" className="w-100" onClick={handleSignUp}>
               Skapa konto
             </Button>
@@ -91,19 +81,17 @@ const SignUp = ({ show, setShow }) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Konto skapat!</Modal.Title>
+          <Modal.Title>Ditt konto har skapats</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Ditt konto har skapats. Vill du logga in nu?</p>
           <Button
             variant="success"
             className="w-100"
             onClick={() => {
               setShowLoginPrompt(false);
-              setShowSignIn(true);
             }}
           >
-            Ja, logga in
+            Okej!
           </Button>
         </Modal.Body>
       </Modal>

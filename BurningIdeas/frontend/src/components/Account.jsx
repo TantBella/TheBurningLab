@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import useUser from "../hooks/useUser";
+import { useUser } from "../hooks/useUser";
+
 import accountSettings from "../assets/accountsettingsicon.png";
 import logOut from "../assets/logouticon.png";
 
