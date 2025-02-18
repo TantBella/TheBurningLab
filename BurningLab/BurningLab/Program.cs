@@ -16,11 +16,16 @@ namespace BurningLab
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var mongoConnectionString = builder.Configuration["ConnectionStrings:MongoDB"];
+            var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDB");
             var databaseName = "TheBurnLab";
 
+            builder.Services.AddSingleton<BurnLabService>(sp =>
+    new BurnLabService(mongoConnectionString, databaseName));
 
-            var app = builder.Build();
+            var app = builder.Build();          
+
+
+         
             //var mongoConnectionString = builder.Configuration["ConnectionStrings:MongoDB"];
             //var databaseName = "TheBurnLab";
 
