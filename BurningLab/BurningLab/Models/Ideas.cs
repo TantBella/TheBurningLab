@@ -7,8 +7,8 @@ namespace BurningLab.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string id { get; set; }
 
+        public string id { get; set; }
         public string IdeaTitle { get; set; }
         public string IdeaText { get; set; }
         public string AnswerText { get; set; }

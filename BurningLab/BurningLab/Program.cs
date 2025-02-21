@@ -55,12 +55,18 @@ namespace BurningLab
 
 
             //READ users
-            app.MapGet("/Users", async (BurnLabService service) =>
+            app.MapGet("/users", async (BurnLabService service) =>
             {
                 var users = await service.GetUsers("Users");
                 return Results.Ok(users);
             });
 
+            //read one user
+            app.MapGet("/user/{id}", async (string id, BurnLabService service) =>
+            {
+                var user = await service.GetUserById(id, "Users"); 
+                return user != null ? Results.Ok(user) : Results.NotFound("Användaren hittades inte.");
+            });
 
             //UPDATE all userdata 
             app.MapPut("/editaccount/{id}", async (BurnLabService service, string id, Users updateUser) =>
@@ -85,15 +91,12 @@ namespace BurningLab
                 return Results.Ok(new { message = "Kontouppgifter uppdaterade!", updatedUser });
             });
 
-
-
             //DELETE user
             app.MapDelete("/deleteaccount/{id}", async (BurnLabService service, string id) =>
             {
                 var user = await service.DeleteUser("Users", id);
                 return Results.Ok(user);
             });
-
 
             // Inloggnings endpoint
             app.MapPost("/signin", async (BurnLabService service, Users loginUser) =>
@@ -103,7 +106,7 @@ namespace BurningLab
                 if (user == null || user.password != loginUser.password)
                     return Results.Unauthorized();
 
-                return Results.Ok(new { message = "Inloggad!", userId = user.id });
+                return Results.Ok(new { message = "Inloggad!", userId = user.id, user.name,user.username });
             });
 
             // Skapa svar

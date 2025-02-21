@@ -12,43 +12,42 @@ namespace BurningLab.Services
         {
             var client = new MongoClient(connectionString);
             _db = client.GetDatabase(database);
-            CreateIndexes().Wait();
         }
-
-        private async Task CreateIndexes()
-        {
-            var userCollection = _db.GetCollection<Users>("Users");
-            var indexKeysDefinition = Builders<Users>.IndexKeys.Ascending(u => u.username);
-            var indexModel = new CreateIndexModel<Users>(indexKeysDefinition, new CreateIndexOptions { Unique = true });
-            await userCollection.Indexes.CreateOneAsync(indexModel);
-        }
-
 
         //CREATE user
         public async Task<List<Users>> CreateUser(string table, Users user)
         {
-            var collection = _db.GetCollection<Users>(table);
-
-            try
-            {
-                user.id = Guid.NewGuid().ToString();
-                await collection.InsertOneAsync(user); 
-            }
-            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
-            {
-                throw new Exception("Användarnamnet är redan taget. Välj ett annat.");
-            }
-
+            var collection = _db.GetCollection<Users>(table);          
+                await collection.InsertOneAsync(user);  
+          
             var createdUser = await collection.Find(u => u.username == user.username).FirstOrDefaultAsync();
-            return new List<Users> { createdUser }; 
+            return new List<Users> { createdUser };
         }
 
 
-        //READ user
+        //READ users
         public async Task<List<Users>> GetUsers(string table)
         {
+            try
+            {
+                var collection = _db.GetCollection<Users>(table);
+                var users = await collection.Find(_ => true).ToListAsync();
+                return users;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetUsers: {ex.Message}");
+                throw;  
+            }
+        }
+
+
+        //read user by id
+        public async Task<Users> GetUserById(string id, string table)
+        {
             var collection = _db.GetCollection<Users>(table);
-            return await collection.Find(_ => true).ToListAsync();
+            var users = await collection.FindAsync(x => x.id == id);
+            return await users.FirstOrDefaultAsync();
         }
 
         //UPDATE all of userdata
@@ -59,23 +58,22 @@ namespace BurningLab.Services
 
             if (getUser == null)
             {
-                return null; 
+                return null;
             }
 
             getUser.username = updatedUser.username;
             getUser.name = updatedUser.name;
-            getUser.password = updatedUser.password; 
+            getUser.password = updatedUser.password;
             await collection.ReplaceOneAsync(x => x.id == id, getUser);
 
-            return getUser; 
+            return getUser;
         }
 
         //update some userdata
         public async Task<Users?> PatchUpdateUser(string table, string id, Users updateUser)
         {
-            var collection = _db.GetCollection<Users>(table);
+            var collection = _db.GetCollection<Users>(table);         
             var filter = Builders<Users>.Filter.Eq(u => u.id, id);
-
             var updateDef = new List<UpdateDefinition<Users>>();
 
             if (!string.IsNullOrEmpty(updateUser.name))
@@ -101,16 +99,13 @@ namespace BurningLab.Services
             return result;
         }
 
-
-
         //DELETE user
         public async Task<string> DeleteUser(string table, string id)
         {
             var collection = _db.GetCollection<Users>(table);
-            //var result = await collection.DeleteOneAsync(x => x._id == id.ToString());
-            //return result.DeletedCount > 0 ? "Användaren togs bort" : "Användaren hittades inte";
-            await collection.DeleteOneAsync(x => x.id == id);
-            return "";
+            var result = await collection.DeleteOneAsync(x => x.id == id);
+
+            return result.DeletedCount > 0 ? "Användaren togs bort" : "Användaren hittades inte";
         }
 
         //skapa svar
@@ -127,7 +122,6 @@ namespace BurningLab.Services
             var collection = _db.GetCollection<Answers>(table);
             return await collection.Find(_ => true).ToListAsync();
         }
-
 
         //hämta ideer
         public async Task<List<Ideas>> GetIdeas(string table)
