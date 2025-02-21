@@ -62,7 +62,7 @@ namespace BurningLab
             });
 
 
-            //UPDATE user     
+            //UPDATE all userdata 
             app.MapPut("/editaccount/{id}", async (BurnLabService service, string id, Users updateUser) =>
             {
                 var updatedUser = await service.UpdateUser("Users", id, updateUser);
@@ -73,6 +73,18 @@ namespace BurningLab
                 }
                 return Results.Ok(updatedUser);
             });
+
+            //Update some userata
+            app.MapPatch("/editaccount/{id}", async (string id, BurnLabService service, Users updateUser) =>
+            {
+                var updatedUser = await service.PatchUpdateUser("Users", id, updateUser);
+                if (updatedUser == null)
+                {
+                    return Results.BadRequest("Inga ändringar gjordes eller användaren kunde inte hittas.");
+                }
+                return Results.Ok(new { message = "Kontouppgifter uppdaterade!", updatedUser });
+            });
+
 
 
             //DELETE user

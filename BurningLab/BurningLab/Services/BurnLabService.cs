@@ -51,7 +51,7 @@ namespace BurningLab.Services
             return await collection.Find(_ => true).ToListAsync();
         }
 
-        //UPDATE user
+        //UPDATE all of userdata
         public async Task<Users?> UpdateUser(string table, string id, Users updatedUser)
         {
             var collection = _db.GetCollection<Users>(table);
@@ -69,6 +69,39 @@ namespace BurningLab.Services
 
             return getUser; 
         }
+
+        //update some userdata
+        public async Task<Users?> PatchUpdateUser(string table, string id, Users updateUser)
+        {
+            var collection = _db.GetCollection<Users>(table);
+            var filter = Builders<Users>.Filter.Eq(u => u.id, id);
+
+            var updateDef = new List<UpdateDefinition<Users>>();
+
+            if (!string.IsNullOrEmpty(updateUser.name))
+                updateDef.Add(Builders<Users>.Update.Set(u => u.name, updateUser.name));
+
+            if (!string.IsNullOrEmpty(updateUser.username))
+                updateDef.Add(Builders<Users>.Update.Set(u => u.username, updateUser.username));
+
+            if (!string.IsNullOrEmpty(updateUser.password))
+            {
+                updateDef.Add(Builders<Users>.Update.Set(u => u.password, updateUser.password));
+            }
+
+            if (!updateDef.Any())
+                return null;
+
+            var update = Builders<Users>.Update.Combine(updateDef);
+            var result = await collection.FindOneAndUpdateAsync(filter, update, new FindOneAndUpdateOptions<Users>
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+
+            return result;
+        }
+
+
 
         //DELETE user
         public async Task<string> DeleteUser(string table, string id)
