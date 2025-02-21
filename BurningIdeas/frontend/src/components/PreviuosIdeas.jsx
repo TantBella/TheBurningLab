@@ -12,6 +12,8 @@ const PreviousIdeas = () => {
   const { user } = useUser();
   const navigate = useNavigate();
 
+  const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
+
   useEffect(() => {
     if (!user || !user.userId) {
       setError("Ingen användare är inloggad. ID saknas.");
@@ -23,7 +25,7 @@ const PreviousIdeas = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:3000/ideas/${user.userId}`
+          `${API_BASE_URL}/ideas/${user.userId}`
         );
         setPreviousIdeas(response.data);
         setLoading(false);

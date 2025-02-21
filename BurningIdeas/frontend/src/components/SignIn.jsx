@@ -12,6 +12,8 @@ const SignIn = ({ show, setShow }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
+  const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/home");
@@ -21,22 +23,27 @@ const SignIn = ({ show, setShow }) => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/signin", {
+      const response = await axios.post(`${API_BASE_URL}/signin`, {
         username,
         password,
       });
 
-      if (response.data.message === "Inloggad!") {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("username", username);
-        localStorage.setItem("_id", response.data.userId);
-        localStorage.setItem("name", response.data.name);
+      console.log(response.data);
 
-        setUser({
-          username,
+      // if (response.data.message === "Inloggad!") {
+      //   setUser(response.data.user);
+      //   localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      if (response.status === 200) {
+        const userData = {
           userId: response.data.userId,
           name: response.data.name,
-        });
+          username: response.data.username,
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("isAuthenticated", "true");
+
+        setUser(userData);
 
         setIsAuthenticated(true);
         setShow(false);

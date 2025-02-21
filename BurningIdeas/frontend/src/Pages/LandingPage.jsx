@@ -12,6 +12,7 @@ const LandingPage = () => {
 
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuthenticated") === "true";
+    console.log("Är användaren inloggad?", authStatus);
     setIsAuthenticated(authStatus);
   }, []);
 

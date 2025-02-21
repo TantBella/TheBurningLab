@@ -20,12 +20,12 @@ const EditAccount = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
+
   useEffect(() => {
-    if (!user) {
-      setLoading(true);
-    } else {
-      setName(user.name || "");
-      setUsername(user.username || "");
+    if (user) {
+      setName(user.name);
+      setUsername(user.username);
       setLoading(false);
     }
   }, [user]);
@@ -41,16 +41,25 @@ const EditAccount = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("username", username);
-    if (oldPassword) formData.append("oldPassword", oldPassword);
-    if (newPassword) formData.append("newPassword", newPassword);
+    const updatedData = {
+      name,
+      username,
+      oldPassword,
+      newPassword,
+    };
+
+    console.log("Submitting data:", updatedData);
+    // new FormData();
+    // formData.append("name", name);
+    // formData.append("username", username);
+    // if (oldPassword) formData.append("oldPassword", oldPassword);
+    // if (newPassword) formData.append("newPassword", newPassword);
 
     try {
       const response = await axios.patch(
-        `http://localhost:3000/editaccount/${user.userId}`,
-        formData,
+        `${API_BASE_URL}/editaccount/${user.userId}`,
+        // formData,
+        updatedData,
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -94,7 +103,7 @@ const EditAccount = () => {
           </div>
         ) : (
           <>
-            <h2>Redigera dina kontouppgifter, {user.username}</h2>
+            <h2>Redigera dina kontouppgifter, {user.name}</h2>
             {message && <p>{message}</p>}
             <Form onSubmit={handleSubmit}>
               <Form.Group>

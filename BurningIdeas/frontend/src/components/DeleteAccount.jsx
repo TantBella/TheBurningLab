@@ -14,16 +14,19 @@ const DeleteAccount = ({
   const [accountDeleted, setAccountDeleted] = useState(false);
   const navigate = useNavigate();
 
+  const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
+
   const handleDeleteConfirm = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/deleteaccount/${user.userId}`,
-        { data: { password: passwordForDelete } }
+        `${API_BASE_URL}/deleteaccount/${user.userId}`,
+        {
+          headers: { "Content-Type": "application/json" },
+          data: { password: passwordForDelete },
+        }
       );
-
-      if (response.data.message === "Kontot raderades.") {
-        setAccountDeleted(true);
-      }
+      console.log("Response:", response);
+      setAccountDeleted(true);
     } catch (error) {
       console.error("Fel vid radering:", error);
       setDeleteMessage("Det gick inte att radera kontot.");

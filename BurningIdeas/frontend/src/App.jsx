@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 
+import { useUser } from "./hooks/useUser";
 import LandingPage from "./Pages/LandingPage";
 import HomePage from "./Pages/HomePage";
 import EditAccount from "./components/EditAccount";
@@ -19,6 +20,7 @@ function Root() {
 }
 
 function App() {
+  const { isAuthenticated } = useUser();
   const router = createHashRouter([
     {
       children: [

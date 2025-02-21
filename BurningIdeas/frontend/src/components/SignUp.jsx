@@ -14,15 +14,20 @@ const SignUp = ({ show, setShow }) => {
     formData.append("username", username);
     formData.append("password", password);
 
+    const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
+
     try {
-      const response = await axios.post("http://localhost:3000/signup", formData, {
-        headers: { "Content-Type": "application/json" },
+      const response = await axios.post(`${API_BASE_URL}/signup`, {
+        name,
+        username,
+        password,
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         setShow(false);
         setShowLoginPrompt(true);
       } else {
+        console.log("Response:", response);
         alert(response.data.message || "Misslyckades med att skapa konto.");
       }
     } catch (error) {
