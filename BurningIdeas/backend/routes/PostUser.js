@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const axios = require("axios");
 
-module.exports = (db) => {
-  const collectionName = "Users";
-
+module.exports = (API_URL, usersCollection) => {
   router.post("/", async (req, res) => {
     const { name, username, password } = req.body;
 
@@ -12,26 +11,29 @@ module.exports = (db) => {
     }
 
     try {
-      const usersCollection = db.collection(collectionName);
-
-      const existingUser = await usersCollection.findOne({ username });
-      if (existingUser) {
+      const userExistsResponse = await axios.get(
+        `${API_URL}/users/${username}`
+      );
+      if (userExistsResponse.data) {
         return res.status(400).json({ message: "Användarnamnet är upptaget." });
       }
 
-      const newUser = {
-        name,
-        username,
-        password,
-      };
-
+      const newUser = { name, username, password };
       await usersCollection.insertOne(newUser);
+
       res
-        .status(201)
+        .status(200)
         .json({ message: "Konto skapat!", user: { name, username } });
     } catch (error) {
-      console.error("Fel vid kontoskapande:", error);
-      res.status(500).json({ message: "Serverfel vid registrering." });
+      console.error(
+        "Fel vid kontoskapande:",
+        error.response?.data || error.message
+      );
+      const statusCode = error.response?.status || 500;
+      res.status(statusCode).json({
+        message: "Serverfel vid registrering.",
+        error: error.response?.data || error.message,
+      });
     }
   });
 

@@ -1,39 +1,40 @@
 const express = require("express");
+const axios = require("axios");
 
-module.exports = (db) => {
+module.exports = (API_URL) => {
   const router = express.Router();
-  const collectionName = "Users";
 
   router.post("/", async (req, res) => {
-    const { username, PassWord } = req.body;
-
     try {
-      if (!db) {
-        return res.status(500).json({ message: "Databasanslutning saknas" });
-      }
+      const { username, password } = req.body;
 
-      const user = await db.collection(collectionName).findOne({ username });
+      const response = await axios.post(`${API_URL}/signin`, {
+        username,
+        password,
+      });
 
-      if (!user) {
-        return res.status(401).json({ message: "Användare hittades inte" });
-      }
-
-      if (user.PassWord === PassWord) {
+      if (response.status === 200) {
+        const userId = response.data.id;
+        const userResponse = await axios.get(`${API_URL}/user/${userId}`);
         res.json({
           message: "Inloggad!",
-          userId: user._id,
-          name: user.name,
-          username: user.username,
-          password: user.password,
+          user: userResponse.data,
         });
       } else {
-        return res.status(401).json({ message: "Fel lösenord" });
+        return res
+          .status(401)
+          .json({ message: "Fel användarnamn eller lösenord" });
       }
     } catch (error) {
       console.error("Fel vid inloggning:", error);
-      res
-        .status(500)
-        .json({ message: "Kunde inte logga in", error: error.message });
+
+      if (error.response) {
+        res.status(error.response.status).json(error.response.data);
+      } else {
+        res
+          .status(500)
+          .json({ message: "Kunde inte logga in", error: error.message });
+      }
     }
   });
 

@@ -1,6 +1,4 @@
 const express = require("express");
-const { ObjectId } = require("mongodb");
-
 const router = express.Router();
 
 module.exports = (db) => {
@@ -12,7 +10,6 @@ module.exports = (db) => {
     }
 
     try {
-      const userObjectId = new ObjectId(id);
 
       const answer = await db
         .collection("Answers")
@@ -27,7 +24,7 @@ module.exports = (db) => {
         IdeaText: ideaText,
         AnswerText: answerText,
         CreatedAt: new Date(),
-        UserId: userObjectId,
+        UserId: user.id,
       };
 
       const result = await db.collection("Ideas").insertOne(newIdea);

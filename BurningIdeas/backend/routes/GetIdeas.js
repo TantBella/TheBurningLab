@@ -1,23 +1,19 @@
 const express = require("express");
-const { ObjectId } = require("mongodb");
+const axios = require("axios");
 
-module.exports = (db) => {
+module.exports = (API_URL) => {
   const router = express.Router();
-  const collectionName = "Ideas";
 
   router.get("/", async (req, res) => {
     try {
-      if (!db) {
-        return res.status(500).json({ message: "Databasanslutning saknas" });
+      const response = await axios.get(`${API_URL}/Ideas`);
+      if (response.status === 200) {
+        res.json(response.data);
+      } else {
+        res.status(500).json({ message: "Kunde inte hämta idéer." });
       }
-
-      const ideas = await db.collection(collectionName).find().toArray();
-      res.json(ideas);
     } catch (error) {
       console.error("Fel vid hämtning av idéer:", error);
-      res
-        .status(500)
-        .json({ message: "Kunde inte hämta idéer", error: error.message });
     }
   });
 
@@ -25,29 +21,27 @@ module.exports = (db) => {
     const { id } = req.params;
 
     try {
-      if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "Ogiltigt användar-ID." });
+      if (!id) {
+        return res.status(400).json({ message: "Ogiltigt ID." });
       }
 
-      const userIdObjectId = new ObjectId(id);
+      const response = await axios.get(`${API_URL}/Ideas/${id}`);
 
-      const ideas = await db
-        .collection("Ideas")
-        .find({ UserId: userIdObjectId })
-        .toArray();
-
-      if (ideas.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "Inga idéer hittades för denn användare" });
+      if (response.status === 200) {
+        const ideas = response.data;
+        if (ideas.length === 0) {
+          return res
+            .status(404)
+            .json({ message: "Inga idéer hittades för denna användare." });
+        }
+        res.json(ideas);
       }
-
-      res.status(200).json(ideas);
     } catch (error) {
-      console.error("Fel vid hämtning:", error);
-      res
-        .status(500)
-        .json({ message: "Ett fel uppstod vid hämtning av idéer." });
+      console.error("Fel vid hämtning av idéer:", error);
+      res.status(500).json({
+        message: "Ett fel uppstod vid hämtning av idéer.",
+        error: error.message,
+      });
     }
   });
 
