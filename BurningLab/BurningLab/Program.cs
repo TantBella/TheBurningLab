@@ -10,7 +10,7 @@ namespace BurningLab
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddControllers();
             builder.Services.AddAuthorization();
 
             builder.Services.AddEndpointsApiExplorer();
@@ -22,26 +22,32 @@ namespace BurningLab
             builder.Services.AddSingleton<BurnLabService>(sp =>
     new BurnLabService(mongoConnectionString, databaseName));
 
-            var app = builder.Build();          
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:5173") 
+                              .AllowAnyMethod()
+                              .AllowAnyHeader()
+                              .AllowCredentials();
+                    });
+            });
 
-
-         
-            //var mongoConnectionString = builder.Configuration["ConnectionStrings:MongoDB"];
-            //var databaseName = "TheBurnLab";
-
-            //BurnLabService db = new BurnLabService(mongoConnectionString, databaseName);
+            var app = builder.Build();
+            app.UseCors("AllowFrontend");
 
             //if (app.Environment.IsDevelopment())
             //{
-                app.UseSwagger();
-                app.UseSwaggerUI();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             //}
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
 
             //CREATE user
-            app.MapPost("/User", async (BurnLabService service, Users user) =>
+            app.MapPost("/signup", async (BurnLabService service, Users user) =>
             {
                 var users = await service.CreateUser("Users", user);
                 return Results.Ok(users);
@@ -56,18 +62,23 @@ namespace BurningLab
             });
 
 
-            //UPDATE user
-            app.MapPut("/User", async (BurnLabService service, Users updateUser) =>
+            //UPDATE user     
+            app.MapPut("/editaccount/{id}", async (BurnLabService service, string id, Users updateUser) =>
             {
-                var user = await service.UpdateUser("Users", updateUser);
-                return Results.Ok(user);
+                var updatedUser = await service.UpdateUser("Users", id, updateUser);
+
+                if (updatedUser == null)
+                {
+                    return Results.NotFound("Användaren hittades inte.");
+                }
+                return Results.Ok(updatedUser);
             });
 
 
             //DELETE user
-            app.MapDelete("/user/{id}", async (BurnLabService service, string id) =>
+            app.MapDelete("/deleteaccount/{id}", async (BurnLabService service, string id) =>
             {
-                var user = await service.DeleteUser("Users", new ObjectId(id));
+                var user = await service.DeleteUser("Users", id);
                 return Results.Ok(user);
             });
 
@@ -76,13 +87,11 @@ namespace BurningLab
             app.MapPost("/signin", async (BurnLabService service, Users loginUser) =>
             {
                 var users = await service.GetUsers("Users");
-
                 var user = users.FirstOrDefault(u => u.username == loginUser.username);
-
                 if (user == null || user.password != loginUser.password)
                     return Results.Unauthorized();
 
-                return Results.Ok(new { message = "Inloggad!", userId = user._id });
+                return Results.Ok(new { message = "Inloggad!", userId = user.id });
             });
 
             // Skapa svar
@@ -106,6 +115,7 @@ namespace BurningLab
                 return Results.Ok(idea);
             });
 
+            app.MapControllers();
             app.Run();
         }
     }
