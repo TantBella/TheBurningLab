@@ -15,18 +15,13 @@ const PreviousIdeas = () => {
   const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
 
   useEffect(() => {
-    if (!user || !user.userId) {
-      setError("Ingen användare är inloggad. ID saknas.");
-      setLoading(false);
-      return;
-    }
-
     const fetchIdeas = async () => {
       try {
         setLoading(true);
         const response = await axios.get(
           `${API_BASE_URL}/ideas/${user.userId}`
         );
+
         setPreviousIdeas(response.data);
         setLoading(false);
       } catch (error) {
@@ -53,14 +48,14 @@ const PreviousIdeas = () => {
         </Container>
         {previousIdeas && previousIdeas.length > 0 ? (
           <ListGroup className="mb-3">
-            {previousIdeas.map((idea) => (
+            {previousIdeas.map((ideas) => (
               <ListGroup.Item
-                key={idea._id}
-                onClick={() => navigate(`/idea/${idea._id}`)}
+                key={ideas.id}
+                onClick={() => navigate(`/idea/${ideas.id}`)}
                 style={{ cursor: "pointer" }}
               >
-                <strong>{idea.IdeaTitle}</strong>:{" "}
-                <span id="ideatext">{idea.IdeaText}</span>
+                <strong>{ideas.ideaTitle}</strong>:{" "}
+                <span id="ideatext">{ideas.ideaText}</span>
               </ListGroup.Item>
             ))}
           </ListGroup>

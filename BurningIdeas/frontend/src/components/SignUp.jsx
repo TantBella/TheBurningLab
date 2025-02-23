@@ -27,7 +27,6 @@ const SignUp = ({ show, setShow }) => {
         setShow(false);
         setShowLoginPrompt(true);
       } else {
-        console.log("Response:", response);
         alert(response.data.message || "Misslyckades med att skapa konto.");
       }
     } catch (error) {

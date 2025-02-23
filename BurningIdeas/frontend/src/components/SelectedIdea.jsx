@@ -7,20 +7,19 @@ import trashCan from "../assets/trashicon.png";
 
 const SelectedIdea = () => {
   const { ideaId } = useParams();
-  const [idea, setIdea] = useState(null);
+  const [idea, setIdea] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
+
   useEffect(() => {
     const fetchIdeaDetails = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/idea/${ideaId}`
-        );
-
+        const response = await axios.get(`${API_BASE_URL}/idea/${ideaId}`);
         if (response.data) {
           setIdea(response.data);
         } else {
@@ -32,13 +31,12 @@ const SelectedIdea = () => {
         setLoading(false);
       }
     };
-
     fetchIdeaDetails();
-  }, [ideaId]);
+  }, []);
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/idea/${ideaId}`);
+      await axios.delete(`${API_BASE_URL}/idea/${ideaId}/delete`);
       setShowModal(false);
       setShowConfirmModal(true);
       setTimeout(() => {
@@ -66,16 +64,16 @@ const SelectedIdea = () => {
             <Card.Header className="d-flex justify-content-between align-items-center bg-white border-0">
               <Card.Title className="mb-0">
                 <strong>Din idé: </strong>
-                {idea.IdeaTitle}
+                {idea.ideaTitle}
               </Card.Title>
               <small className="text-muted">
-                {new Date(idea.CreatedAt).toLocaleString()}
+                {new Date(idea.createdAt).toLocaleString()}
               </small>
             </Card.Header>
             <Card.Body>
-              <Card.Text>{idea.IdeaText}</Card.Text>
+              <Card.Text>{idea.ideaText}</Card.Text>
               <Card.Text>
-                <strong>The Burnlab tycker:</strong> {idea.AnswerText}
+                <strong>The Burnlab tycker:</strong> {idea.answerText}
               </Card.Text>
             </Card.Body>
             <Card.Footer className="bg-white border-0 d-flex justify-content-end">

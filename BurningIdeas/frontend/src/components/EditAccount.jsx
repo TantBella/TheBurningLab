@@ -49,16 +49,10 @@ const EditAccount = () => {
     };
 
     console.log("Submitting data:", updatedData);
-    // new FormData();
-    // formData.append("name", name);
-    // formData.append("username", username);
-    // if (oldPassword) formData.append("oldPassword", oldPassword);
-    // if (newPassword) formData.append("newPassword", newPassword);
 
     try {
       const response = await axios.patch(
         `${API_BASE_URL}/editaccount/${user.userId}`,
-        // formData,
         updatedData,
         { headers: { "Content-Type": "application/json" } }
       );

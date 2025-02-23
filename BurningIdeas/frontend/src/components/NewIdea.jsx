@@ -5,12 +5,14 @@ import arrowDown from "../assets/arrow-down.gif";
 import { useUser } from "../hooks/useUser";
 
 const NewIdea = () => {
-  const [ideaTitle, setIdeaTitle] = useState("");
-  const [ideaText, setIdeaText] = useState("");
+  const [IdeaTitle, setIdeaTitle] = useState("");
+  const [IdeaText, setIdeaText] = useState("");
   const [message, setMessage] = useState("");
   const [answer, setAnswer] = useState("");
   const [showModal, setShowModal] = useState(false);
   const { user } = useUser();
+
+  const API_BASE_URL = import.meta.env.VITE_DOTNET_API_URL;
 
   const handleIdea = async (e) => {
     if (!user) {
@@ -18,19 +20,27 @@ const NewIdea = () => {
       return;
     }
 
-    try {
-      const response = await axios.post("http://localhost:3000/postidea", {
-        id: user.userId,
-        ideaTitle,
-        ideaText,
-      });
+    if (!IdeaTitle || !IdeaText) {
+      setMessage("Både titel och text är obligatoriska.");
+      return;
+    }
 
+    try {
+      const response = await axios.post(`${API_BASE_URL}/newidea`, {
+        IdeaTitle,
+        IdeaText,
+        UserId: user.userId,
+      });
       setMessage(response.data.message);
       setAnswer(response.data.answerText);
       setShowModal(true);
       setIdeaTitle("");
       setIdeaText("");
     } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
       setMessage("Något gick fel, försök igen.");
     }
   };
@@ -52,7 +62,7 @@ const NewIdea = () => {
               className="mt-2"
               type="text"
               placeholder="Din briljanta (eller galna) idé..."
-              value={ideaText}
+              value={IdeaText}
               onChange={(e) => setIdeaText(e.target.value)}
               required
             />
@@ -60,7 +70,7 @@ const NewIdea = () => {
               className="mt-2"
               type="text"
               placeholder="Döp din idé"
-              value={ideaTitle}
+              value={IdeaTitle}
               onChange={(e) => setIdeaTitle(e.target.value)}
               required
             />

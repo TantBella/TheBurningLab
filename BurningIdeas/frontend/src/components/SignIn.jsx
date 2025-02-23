@@ -30,10 +30,6 @@ const SignIn = ({ show, setShow }) => {
 
       console.log(response.data);
 
-      // if (response.data.message === "Inloggad!") {
-      //   setUser(response.data.user);
-      //   localStorage.setItem("user", JSON.stringify(response.data.user));
-
       if (response.status === 200) {
         const userData = {
           userId: response.data.userId,
