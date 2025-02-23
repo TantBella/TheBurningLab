@@ -49,29 +49,28 @@ namespace BurningLab
             //CREATE user
             app.MapPost("/signup", async (BurnLabService service, Users user) =>
             {
-                var users = await service.CreateUser("Users", user);
+                var users = await service.CreateUser( user);
                 return Results.Ok(users);
             });
-
 
             //READ users
             app.MapGet("/users", async (BurnLabService service) =>
             {
-                var users = await service.GetUsers("Users");
+                var users = await service.GetUsers();
                 return Results.Ok(users);
             });
 
             //read one user
             app.MapGet("/user/{id}", async (string id, BurnLabService service) =>
             {
-                var user = await service.GetUserById(id, "Users"); 
+                var user = await service.GetUserById(id); 
                 return user != null ? Results.Ok(user) : Results.NotFound("Användaren hittades inte.");
             });
 
             //UPDATE all userdata 
             app.MapPut("/editaccount/{id}", async (BurnLabService service, string id, Users updateUser) =>
             {
-                var updatedUser = await service.UpdateUser("Users", id, updateUser);
+                var updatedUser = await service.UpdateUser( id, updateUser);
 
                 if (updatedUser == null)
                 {
@@ -83,7 +82,7 @@ namespace BurningLab
             //Update some userata
             app.MapPatch("/editaccount/{id}", async (string id, BurnLabService service, Users updateUser) =>
             {
-                var updatedUser = await service.PatchUpdateUser("Users", id, updateUser);
+                var updatedUser = await service.PatchUpdateUser( id, updateUser);
                 if (updatedUser == null)
                 {
                     return Results.BadRequest("Inga ändringar gjordes eller användaren kunde inte hittas.");
@@ -94,14 +93,14 @@ namespace BurningLab
             //DELETE user
             app.MapDelete("/deleteaccount/{id}", async (BurnLabService service, string id) =>
             {
-                var user = await service.DeleteUser("Users", id);
-                return Results.Ok(user);
+                var message = await service.DeleteUser( id);
+                return Results.Ok(message);
             });
 
             // Inloggnings endpoint
             app.MapPost("/signin", async (BurnLabService service, Users loginUser) =>
             {
-                var users = await service.GetUsers("Users");
+                var users = await service.GetUsers();
                 var user = users.FirstOrDefault(u => u.username == loginUser.username);
                 if (user == null || user.password != loginUser.password)
                     return Results.Unauthorized();
@@ -110,24 +109,59 @@ namespace BurningLab
             });
 
             // Skapa svar
-            app.MapPost("/Answers", async (BurnLabService service, Answers answer) =>
+            app.MapPost("/answer", async (BurnLabService service, Answers answer) =>
             {
-                var createdAnswer = await service.CreateAnswer("Answers", answer);
+                var createdAnswer = await service.CreateAnswer( answer);
                 return Results.Ok(createdAnswer);
             });
 
             // Hämta alla  svar
-            app.MapGet("/Answers", async (BurnLabService service) =>
+            app.MapGet("/answers", async (BurnLabService service) =>
             {
-                var answers = await service.GetAnswers("Answers");
+                var answers = await service.GetAnswers();
                 return Results.Ok(answers);
             });
 
-            //hämta alla ideer
-            app.MapGet("/Ideas", async (BurnLabService service) =>
+            //skapa ideer
+            app.MapPost("/newidea", async (BurnLabService service, Ideas idea) =>
             {
-                var idea = await service.GetIdeas("Ideas");
-                return Results.Ok(idea);
+                try
+                {
+                    var newIdea = await service.CreateIdea( idea);
+                    return Results.Ok(newIdea);
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest("Misslyckades att skapa idén: {ex.Message}");
+                }
+            });
+
+            //hämta alla ideer
+            app.MapGet("/ideas", async (BurnLabService service) =>
+            {
+                var ideas = await service.GetIdeas();        
+               return Results.Ok(ideas);
+            });
+
+            //hämta alla ideer som hör till en specidfik användare
+            app.MapGet("/ideas/{UserId}", async ( BurnLabService service, string UserId) =>
+            {
+                var ideas = await service.GetIdeas( UserId);
+                return Results.Ok(ideas);
+            });
+
+            //hämta en specifik idé
+            app.MapGet("/idea/{id}", async (BurnLabService service, string id) =>
+            {
+                var idea = await service.GetIdeaById(id);
+                return idea == null ? Results.NotFound() : Results.Ok(idea);
+            });
+
+            //radera en idé
+            app.MapDelete("/idea/{id}/delete", async (BurnLabService service, string id) =>
+            {
+                var message = await service.DeleteIdea(id);
+                return Results.Ok(message);
             });
 
             app.MapControllers();

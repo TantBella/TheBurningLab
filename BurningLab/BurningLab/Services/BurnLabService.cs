@@ -15,22 +15,21 @@ namespace BurningLab.Services
         }
 
         //CREATE user
-        public async Task<List<Users>> CreateUser(string table, Users user)
+        public async Task<List<Users>> CreateUser( Users user)
         {
-            var collection = _db.GetCollection<Users>(table);          
+            var collection = _db.GetCollection<Users>("Users");          
                 await collection.InsertOneAsync(user);  
           
-            var createdUser = await collection.Find(u => u.username == user.username).FirstOrDefaultAsync();
+            var createdUser = await collection.Find(user => user.username == user.username).FirstOrDefaultAsync();
             return new List<Users> { createdUser };
         }
 
-
         //READ users
-        public async Task<List<Users>> GetUsers(string table)
+        public async Task<List<Users>> GetUsers()
         {
             try
             {
-                var collection = _db.GetCollection<Users>(table);
+                var collection = _db.GetCollection<Users>("Users");
                 var users = await collection.Find(_ => true).ToListAsync();
                 return users;
             }
@@ -41,20 +40,19 @@ namespace BurningLab.Services
             }
         }
 
-
         //read user by id
-        public async Task<Users> GetUserById(string id, string table)
+        public async Task<Users> GetUserById(string id)
         {
-            var collection = _db.GetCollection<Users>(table);
+            var collection = _db.GetCollection<Users>("Users");
             var users = await collection.FindAsync(x => x.id == id);
             return await users.FirstOrDefaultAsync();
         }
 
         //UPDATE all of userdata
-        public async Task<Users?> UpdateUser(string table, string id, Users updatedUser)
+        public async Task<Users?> UpdateUser(string id, Users updatedUser)
         {
-            var collection = _db.GetCollection<Users>(table);
-            var getUser = await collection.Find(x => x.id == id).FirstOrDefaultAsync();
+            var collection = _db.GetCollection<Users>("Users");
+            var getUser = await collection.Find(user => user.id == id).FirstOrDefaultAsync();
 
             if (getUser == null)
             {
@@ -64,27 +62,27 @@ namespace BurningLab.Services
             getUser.username = updatedUser.username;
             getUser.name = updatedUser.name;
             getUser.password = updatedUser.password;
-            await collection.ReplaceOneAsync(x => x.id == id, getUser);
+            await collection.ReplaceOneAsync(user => user.id == id, getUser);
 
             return getUser;
         }
 
         //update some userdata
-        public async Task<Users?> PatchUpdateUser(string table, string id, Users updateUser)
+        public async Task<Users?> PatchUpdateUser(string id, Users updateUser)
         {
-            var collection = _db.GetCollection<Users>(table);         
-            var filter = Builders<Users>.Filter.Eq(u => u.id, id);
+            var collection = _db.GetCollection<Users>("Users");         
+            var filter = Builders<Users>.Filter.Eq(user => user.id, id);
             var updateDef = new List<UpdateDefinition<Users>>();
 
             if (!string.IsNullOrEmpty(updateUser.name))
-                updateDef.Add(Builders<Users>.Update.Set(u => u.name, updateUser.name));
+                updateDef.Add(Builders<Users>.Update.Set(user => user.name, updateUser.name));
 
             if (!string.IsNullOrEmpty(updateUser.username))
-                updateDef.Add(Builders<Users>.Update.Set(u => u.username, updateUser.username));
+                updateDef.Add(Builders<Users>.Update.Set(user => user.username, updateUser.username));
 
             if (!string.IsNullOrEmpty(updateUser.password))
             {
-                updateDef.Add(Builders<Users>.Update.Set(u => u.password, updateUser.password));
+                updateDef.Add(Builders<Users>.Update.Set(user => user.password, updateUser.password));
             }
 
             if (!updateDef.Any())
@@ -100,34 +98,90 @@ namespace BurningLab.Services
         }
 
         //DELETE user
-        public async Task<string> DeleteUser(string table, string id)
+        public async Task<string> DeleteUser(string id)
         {
-            var collection = _db.GetCollection<Users>(table);
-            var result = await collection.DeleteOneAsync(x => x.id == id);
+            var collection = _db.GetCollection<Users>("Users");
+            var ideas = await GetIdeas(id);
+            ideas.ForEach(async idea => await DeleteIdea(idea.id));
+        
+            var result = await collection.DeleteOneAsync(user => user.id == id);
 
             return result.DeletedCount > 0 ? "Användaren togs bort" : "Användaren hittades inte";
         }
 
         //skapa svar
-        public async Task<List<Answers>> CreateAnswer(string table, Answers answer)
+        public async Task<List<Answers>> CreateAnswer( Answers answer)
         {
-            var collection = _db.GetCollection<Answers>(table);
+            var collection = _db.GetCollection<Answers>("Answers");
             await collection.InsertOneAsync(answer);
             return collection.AsQueryable().ToList();
         }
 
         // Hämta alla svar
-        public async Task<List<Answers>> GetAnswers(string table)
+        public async Task<List<Answers>> GetAnswers()
         {
-            var collection = _db.GetCollection<Answers>(table);
+            var collection = _db.GetCollection<Answers>("Answers");
             return await collection.Find(_ => true).ToListAsync();
         }
 
-        //hämta ideer
-        public async Task<List<Ideas>> GetIdeas(string table)
+        //skapa ideer
+        public async Task<Ideas> CreateIdea( Ideas idea )
         {
-            var collection = _db.GetCollection<Ideas>(table);
+            var ideasCollection = _db.GetCollection<Ideas>("Ideas");
+            var answersCollection = _db.GetCollection<Answers>("Answers");
+
+            var randomAnswer = await answersCollection.Aggregate()
+                .Sample(1) 
+                .FirstOrDefaultAsync();
+
+            if (randomAnswer == null)
+            {
+                throw new Exception("Inga svar hittades i databasen.");
+            }
+
+            var newIdea = new Ideas
+            {
+
+                id = ObjectId.GenerateNewId().ToString(),
+                IdeaTitle = idea.IdeaTitle,
+                IdeaText = idea.IdeaText,
+                AnswerText = randomAnswer.AnswerText,
+                CreatedAt = DateTime.UtcNow,
+                UserId = idea.UserId
+
+            };
+
+            await ideasCollection.InsertOneAsync(newIdea);
+            return newIdea;
+        }
+
+        //hämta ideer
+        public async Task<List<Ideas>> GetIdeas( string UserId = null)
+        {
+            var collection = _db.GetCollection<Ideas>("Ideas");
+            if (UserId == null)
+            {
             return await collection.Find(_ => true).ToListAsync();
+            }
+            
+            return await collection.Find(idea => idea.UserId == UserId).ToListAsync();
+        }
+
+        //hämta en specifik idé
+        public async Task<Ideas> GetIdeaById( string id)
+        {
+            var collection = _db.GetCollection<Ideas>("Ideas");
+            var idea = await collection.FindAsync(i => i.id == id);
+            return await idea.FirstOrDefaultAsync();
+        }
+
+        //raderra idé
+        public async Task<string> DeleteIdea(string id)
+        {
+            var collection = _db.GetCollection<Ideas>("Ideas");
+            var result = await collection.DeleteOneAsync(idea => idea.id == id);
+
+            return result.DeletedCount > 0 ? "Idén togs bort" : "Idén hittades inte";
         }
     }
 }
