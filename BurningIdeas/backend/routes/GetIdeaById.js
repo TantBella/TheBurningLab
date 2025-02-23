@@ -1,18 +1,22 @@
 const express = require("express");
-const { ObjectId } = require("mongodb");
+const axios = require("axios");
 
-module.exports = (db) => {
+module.exports = (API_URL) => {
   const router = express.Router();
 
   router.get("/:ideaId", async (req, res) => {
     try {
-      const ideaId = new ObjectId(req.params.ideaId);
-      const idea = await db.collection("Ideas").findOne({ _id: ideaId });
-
-      if (!idea) {
-        return res.status(404).send("Ingen idé hittades");
+      const response = await axios.get(`${API_URL}/idea/${id}`);
+      if (response.status === 200) {
+        console.log(response.data);
+        if (response.data.length === 0) {
+          return res
+            .status(404)
+            .json({ message: "Inga idéer hittades för denna användare." });
+        }
       }
-      res.json(idea);
+
+      res.json(response.data);
     } catch (err) {
       console.error("Fel vid hämtning av idé:");
       res.status(500).send("Fel vid hämtning av idé");
