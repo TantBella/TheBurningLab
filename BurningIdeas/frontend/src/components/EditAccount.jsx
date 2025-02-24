@@ -48,8 +48,6 @@ const EditAccount = () => {
       newPassword,
     };
 
-    console.log("Submitting data:", updatedData);
-
     try {
       const response = await axios.patch(
         `${API_BASE_URL}/editaccount/${user.userId}`,
@@ -69,7 +67,6 @@ const EditAccount = () => {
         setShowUpdateSuccess(true);
       }
     } catch (error) {
-      console.error("Fel vid uppdatering:", error);
       setMessage("Det gick inte att uppdatera kontouppgifter.");
     }
   };

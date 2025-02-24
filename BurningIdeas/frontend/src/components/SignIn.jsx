@@ -28,8 +28,6 @@ const SignIn = ({ show, setShow }) => {
         password,
       });
 
-      console.log(response.data);
-
       if (response.status === 200) {
         const userData = {
           userId: response.data.userId,

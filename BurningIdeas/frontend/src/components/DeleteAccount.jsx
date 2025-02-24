@@ -25,8 +25,9 @@ const DeleteAccount = ({
           data: { password: passwordForDelete },
         }
       );
-      console.log("Response:", response);
-      setAccountDeleted(true);
+      if (response.status === 200) {
+        setAccountDeleted(true);
+      }
     } catch (error) {
       console.error("Fel vid radering:", error);
       setDeleteMessage("Det gick inte att radera kontot.");
