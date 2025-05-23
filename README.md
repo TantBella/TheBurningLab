@@ -23,3 +23,14 @@ kan komma till nytta.
 
 
 ![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl01.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl03.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl04.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl02.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl05.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl06.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl07.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl08.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl09.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl011.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl010.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl012.png)
