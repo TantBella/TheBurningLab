@@ -20,3 +20,6 @@ kan komma till nytta.
 • Någon sorts grundläggande UI  
 • Skapa en endpoint som hämtar tillgänglig data ifrån .net API  
 • Skapa en endpoint som lägger till information i vårt .net API  
+
+
+(https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl01.png)
