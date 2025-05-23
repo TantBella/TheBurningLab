@@ -25,7 +25,7 @@ kan komma till nytta.
 ![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl01.png)
 ![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl03.png)
 ![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl04.png)
-![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl02.png)
+
 ![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl05.png)
 ![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl06.png)
 ![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl07.png)
