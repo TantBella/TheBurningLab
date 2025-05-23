@@ -22,4 +22,4 @@ kan komma till nytta.
 • Skapa en endpoint som lägger till information i vårt .net API  
 
 
-!(https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl01.png)
+![](https://github.com/TantBella/TheBurningLab/blob/main/visual_project/bl01.png)
